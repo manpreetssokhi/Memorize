@@ -10,11 +10,12 @@ import SwiftUI
 
 
 // ViewModel
-class EmojiMemoryGame {
+class EmojiMemoryGame: ObservableObject {
     // Private means it can only be accessed to EmojiMemoryGame
     // Inline the func createCardContent (called a closure) - take everything except name and keyword func, paste where function would have been called, replace first curly brace with 'in' and bring curly brace where name of function would have been. Can go ahead and take out the types (if possible) because of type inference.
     // Now it is a function of the type not an instance of EmojiMemoryGame
-    private var model: MemoryGame<String> = EmojiMemoryGame.createMemoryGame()
+    // @Published is a property wrapper that adds functionality around property - everytime this property (aka model) changes, it will call objectWillChange.send()
+    @Published private var model: MemoryGame<String> = EmojiMemoryGame.createMemoryGame()
     
     // Static makes it a function on the type. Instead of a function where we send an instnace of EmojiMemoryGame, we are sending it to type
     static func createMemoryGame() -> MemoryGame<String> {
@@ -23,6 +24,8 @@ class EmojiMemoryGame {
             return emojis[pairIndex]
         }
     }
+    
+     // var objectWillChange: ObservableObjectPublisher // doesn't need to be here, just get it for free
     
     
     // MARK: - Access to the Model
