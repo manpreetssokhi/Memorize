@@ -14,13 +14,12 @@ struct EmojiMemoryGameView: View { // is created in SceneDelegate
     
     // body is called by the system, we implement the View
     var body: some View {
-        HStack {
-            // get this card from ViewModel
-            ForEach(viewModel.cards) { card in
-                CardView(card: card).onTapGesture {
-                    self.viewModel.choose(card: card)
-                }
+        // get this card from ViewModel
+        Grid(viewModel.cards) { card in // last argument to Grid
+            CardView(card: card).onTapGesture {
+                self.viewModel.choose(card: card)
             }
+        .padding(5)
         }
             .padding()
             .foregroundColor(Color.orange)

@@ -15,19 +15,19 @@ struct MemoryGame<CardContent> { // have to declare the "don't care"
     // all functions that modify self in struct (not class) need mutating
     mutating func choose(card: Card) {
         print("card chosen: \(card)")
-        let chosenIndex: Int = self.index(of: card)
+        let chosenIndex: Int = cards.firstIndex(matching: card)
         self.cards[chosenIndex].isFaceUp = !self.cards[chosenIndex].isFaceUp // flip card over directly inside array
     }
     
-    // of is external name and card is internal name
-    func index(of card: Card) -> Int {
-        for index in 0..<self.cards.count {
-            if self.cards[index].id == card.id {
-                return index
-            }
-        }
-        return 0 // TODO: bogus!
-    }
+//    // of is external name and card is internal name
+//    func index(of card: Card) -> Int {
+//        for index in 0..<self.cards.count {
+//            if self.cards[index].id == card.id {
+//                return index
+//            }
+//        }
+//        return 0 // TODO: bogus!
+//    }
     
     // can have multiple inits, job is to initialze our vars, all inits are mutating implicitly
     init(numberOfPairsOfCards: Int, cardContentFactory: (Int) -> CardContent) {
