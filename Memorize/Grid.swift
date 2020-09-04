@@ -34,19 +34,11 @@ struct Grid<Item, ItemView>: View where Item: Identifiable, ItemView: View {
     }
     
     func body(for item: Item, in layout: GridLayout) -> some View {
-        let index = items.firstIndex(matching: item)
-        return viewForItem(item)
-            .frame(width: layout.itemSize.width, height: layout.itemSize.height)
-            .position(layout.location(ofItemAt: index))
+        let index = items.firstIndex(matching: item)! // ! will force unwrap it and turn index to an int
+        return Group { // Group's function argument is a View builder, positioning will still work
+            viewForItem(item)
+                .frame(width: layout.itemSize.width, height: layout.itemSize.height)
+                .position(layout.location(ofItemAt: index))
+        }
     }
-    
-//    // Hmm this is the exactly same code as in model - can use extension because this is an array thing
-//    func index(of item: Item) -> Int {
-//        for index in 0..<items.count {
-//            if items[index].id == item.id { // just returns the first index of the item
-//                return index
-//            }
-//        }
-//        return 0 // TODO: bogus!
-//    }
 }

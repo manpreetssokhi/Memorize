@@ -9,25 +9,39 @@
 import Foundation
 
 // Model
-struct MemoryGame<CardContent> { // have to declare the "don't care"
+struct MemoryGame<CardContent> where CardContent: Equatable { // have to declare the "don't care", only works when CardContent can be equatable
     var cards: Array<Card>
+    
+    var indexOfTheOneAndOnlyFaceUpCard: Int? {
+        get { cards.indices.filter { cards[$0].isFaceUp }.only } // $0 for first argument $1 for second etc.
+        set {
+            for index in cards.indices {
+                cards[index].isFaceUp = index == newValue // newValue is a special var that only appears inside set for computed property, it is an optional
+            }
+        }
+    }
+    
     
     // all functions that modify self in struct (not class) need mutating
     mutating func choose(card: Card) {
         print("card chosen: \(card)")
-        let chosenIndex: Int = cards.firstIndex(matching: card)
-        self.cards[chosenIndex].isFaceUp = !self.cards[chosenIndex].isFaceUp // flip card over directly inside array
+        if let chosenIndex: Int = cards.firstIndex(matching: card), !cards[chosenIndex].isFaceUp, !cards[chosenIndex].isMatched { // , is like a sequential &&
+            // scenario 1 - all cards are face down and then hit card, it flips, and no matching happens
+            // scenario 2 - have one card up and click on a second card - this is where matching will happen
+            // scenario 3 - two cards face up and click third card - turn other two face down regardless if match and new card touched needs to flip
+            
+            if let potentialMatchIndex = indexOfTheOneAndOnlyFaceUpCard {
+                if cards[chosenIndex].content == cards[potentialMatchIndex].content {
+                    cards[chosenIndex].isMatched = true
+                    cards[potentialMatchIndex].isMatched = true
+                }
+                self.cards[chosenIndex].isFaceUp = true // flip card over directly inside array
+            } else {
+                indexOfTheOneAndOnlyFaceUpCard = chosenIndex
+            }
+        }
     }
-    
-//    // of is external name and card is internal name
-//    func index(of card: Card) -> Int {
-//        for index in 0..<self.cards.count {
-//            if self.cards[index].id == card.id {
-//                return index
-//            }
-//        }
-//        return 0 // TODO: bogus!
-//    }
+
     
     // can have multiple inits, job is to initialze our vars, all inits are mutating implicitly
     init(numberOfPairsOfCards: Int, cardContentFactory: (Int) -> CardContent) {
@@ -41,7 +55,7 @@ struct MemoryGame<CardContent> { // have to declare the "don't care"
     
     // fullname would be MemoryGame.Card
     struct Card: Identifiable {
-        var isFaceUp: Bool = true
+        var isFaceUp: Bool = false
         var isMatched: Bool = false
         var content: CardContent // UI independent game play so don't really care what is on the card
         var id: Int

@@ -9,13 +9,13 @@
 import Foundation
 
 extension Array where Element: Identifiable {
-    func firstIndex(matching: Element) -> Int {
+    func firstIndex(matching: Element) -> Int? { // return type is now an optional and will allow us to return nil if not found
         for index in 0..<self.count {
             if self[index].id == matching.id {
                 return index
             }
         }
-        return 0 // TODO: bogus!
+        return nil
     }
     
 }
