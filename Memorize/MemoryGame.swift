@@ -10,9 +10,9 @@ import Foundation
 
 // Model
 struct MemoryGame<CardContent> where CardContent: Equatable { // have to declare the "don't care", only works when CardContent can be equatable
-    var cards: Array<Card>
+    private(set) var cards: Array<Card> // setting is private, but viewing is not
     
-    var indexOfTheOneAndOnlyFaceUpCard: Int? {
+    private var indexOfTheOneAndOnlyFaceUpCard: Int? {
         get { cards.indices.filter { cards[$0].isFaceUp }.only } // $0 for first argument $1 for second etc.
         set {
             for index in cards.indices {
